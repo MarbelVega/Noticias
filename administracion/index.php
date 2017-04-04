@@ -29,7 +29,9 @@
 		<![endif]-->
 		<link rel="stylesheet" href="css/ace-skins.min.css" />
 		<link rel="stylesheet" href="css/ace-rtl.min.css" />
-
+		<link rel="stylesheet" type="text/css" href="../css/sweetalert.css">
+        <script type="text/javascript" src="../js/jquery.js"></script>
+        <script type="text/javascript" src="../js/sweetalert.min.js"></script>
 		<!--[if lte IE 9]>
 		  <link rel="stylesheet" href="css/ace-ie.min.css" />
 		<![endif]-->
@@ -49,8 +51,34 @@
 
 <body class="no-skin">
     <?php
-        $usuario = $_POST['v_user'];
-        $contrasenia = $_POST['v_password'];
+		session_start();
+		if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) {
+		
+		} else {
+		?>
+		<script>
+			swal({
+		    			title: "Acceso restringido!",
+		    			text: "Esta pagina es exclusiva para usuarios registrados",
+		    			type: "error",
+		    			showCancelButton:true,
+		    			confirmButtonColor: "#DD6B55",
+		    			confirmButtonText: "Registrarse",
+		    			cancelButtonText: "Salir",
+		    			closeOnConfirm: false,
+		    			closeOnCancel: false},
+		    			function(isConfirm){
+		    				if(isConfirm){
+		    					swal({title: "Redireccionando",text: "registro de usuarios",type: "success"},function(){
+		    							window.location.href = '../alta_usuario.html';		  	
+		    						  });	
+		    				}else{
+		    					window.location.href = '../index.html';
+		    				}
+		    			});
+		</script>
+		<?php
+	}
     ?>
 
 	<!-- -Inicia contenedor o div azul superior -->
@@ -337,9 +365,9 @@
 								<img class="nav-user-photo" src="images/logo.png" alt="Dr. Ángel" />
 								<span class="user-info">
 								<?php
-									if($usuario=='angelslv' && $contrasenia=='admin')
+									if( $_SESSION['userName']!="")
 									{
-									    echo "<small>Bienvenido,</small> Dr. Ángel V.";
+									    echo "<small>Bienvenido,</small>".$_SESSION['userName'];
 									 
 									}
 									else{
@@ -364,7 +392,7 @@
 								<li class="divider"></li>
 
 								<li>
-									<a href="../index.html">
+									<a href="../Modelo/cerrar_sesion.php">
 										<i class="ace-icon fa fa-power-off"></i>
 										Cerrar Sesión
 									</a>

@@ -13,6 +13,27 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1" />
     <meta name="robots" content="index, follow" />
     <!-- TERMINAN ETIQUETAS NUEVAS -->
+    <script type="text/javascript">
+         var correo_electronico;
+         function enviarMail(){
+          swal({
+				  title: "Recuperacion de password",
+				  text: "Escribe una direccion de correo para enviar la contraseña",
+				  type: "input",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  inputPlaceholder: "email"
+				}, function (inputValue) {
+				  if (inputValue === false) return false;
+				  if (inputValue === "") {
+				    swal.showInputError("Necesita escribir una direccion de correo electronico");
+				    return false
+				  }
+				  swal("Contraseña enviada", "La contraseña ha sido enviada a la direccion de correo electronico proporcionada", "success");
+				  correo_electronico = inputValue;
+				});   
+         }
+    </script>
 </head>
 <body>
   
@@ -22,11 +43,11 @@
     <section>
        <!-- En este apartado debe ir el formulario que servirá de para pedir los datos de usuario y contraseña para el acceso al panel principal -->
        <!-- linea agregada por ULISES GARCIA RAMOS-->
-       <form action="administracion/index.php" method="post" name="fm1" id="fm1css">
+       <form action="Modelo/validar_usuario.php" method="post" name="fm1" id="fm1css">
           
-           <input type="text" name="v_user" id="v_user_css" placeholder="USUARIO" required="required">
+           <input type="text" name="c_nombre" id="v_user_css" placeholder="USUARIO" required="required">
            
-           <input type="password" name="v_password" id="v_pass_css" placeholder="CONTRASEÑA" required="required">
+           <input type="password" name="c_password" id="v_pass_css" placeholder="CONTRASEÑA" required="required">
            
            <div class="btn-env">
                <input type="submit" id="btne" name="btn_ingresar" value="Iniciar Sesión">
