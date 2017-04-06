@@ -18,7 +18,7 @@
         echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
         exit;
     }
-    $query = "select idUsuario,nombre,usuario,estado from usuario where usuario='$nombre_usuario' and password = AES_ENCRYPT('$password','llave')";
+    $query = "select idUsuario,nombre,usuario,estado,rol from usuario where usuario='$nombre_usuario' and password = AES_ENCRYPT('$password','llave')";
     if($resultado = mysqli_query($enlace,$query)){
         if(mysqli_num_rows($resultado)>0){
             $fila = mysqli_fetch_array($resultado, MYSQLI_ASSOC);
@@ -26,6 +26,7 @@
             $_SESSION['userId'] = $fila['idUsuario'];
     	    $_SESSION['userName'] = $fila['nombre'];
             $_SESSION['userUser'] = $fila['usuario'];
+            $_SESSION['userRol'] = $fila['rol'];
             $estado = $fila['estado'];
             if($estado < 3){ ?>
                   <script type="text/javascript">

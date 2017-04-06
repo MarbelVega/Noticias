@@ -32,6 +32,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/sweetalert.css">
         <script type="text/javascript" src="../js/jquery.js"></script>
         <script type="text/javascript" src="../js/sweetalert.min.js"></script>
+		<script type="text/javascript" src="../js/sweetalert.min.js"></script>
 		<!--[if lte IE 9]>
 		  <link rel="stylesheet" href="css/ace-ie.min.css" />
 		<![endif]-->
@@ -80,6 +81,102 @@
 		<?php
 	}
     ?>
+	<!-- Ventana modal para perfil de usuario -->
+
+  <!-- Trigger the modal with a button -->
+
+  <!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
+		
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header" style="padding:35px 50px;">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4><span class="glyphicon glyphicon-lock"></span> Perfil</h4>
+			</div>
+			<div class="modal-body" style="padding:40px 50px;">
+			<form role="form">
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span>Nombre</label>
+				<input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
+				</div>
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span> Apellidos</label>
+				<input type="text" class="form-control" id="apellidos" placeholder="Apellidos" required>
+				</div>
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span> Nombre de usuario</label>
+				<input type="text" class="form-control" id="usuario" placeholder="Usuario" required>
+				</div>
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span>Correo electronico</label>
+				<input type="text" class="form-control" id="email" placeholder="email" required>
+				</div>
+				<div class="form-group">
+				<label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+				<input type="text" class="form-control" id="password" placeholder="********" required>
+				</div>
+				<div class="form-group">
+				<label for="psw"><span class="glyphicon glyphicon-eye-open"></span>Confirmar password</label>
+				<input type="text" class="form-control" id="password2" placeholder="********" required>
+				</div>
+				<button type="submit" class="btn btn-success btn-block" id="enviar_datos"><span class="glyphicon glyphicon-off"></span>Aceptar</button>
+			</form>
+			</div>
+			<div class="modal-footer">
+			<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+			</div>
+		</div>
+		
+		</div>
+	</div> 
+	
+	<script>
+		$(document).ready(function(){
+			$("#myBtn").click(function(){
+				$.ajax({
+					data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'1'},
+					dataType: "json",
+					url: "http://localhost/Noticias/administracion/perfil.php",
+					type: "POST",
+					success:  function (response) {
+						$("#nombre").val(response.usuario.nombre);
+						$("#apellidos").val(response.usuario.apellidos);
+						$("#usuario").val(response.usuario.usuario);
+						$("#email").val(response.usuario.email);
+						$("#password").val(response.usuario.password);
+						$("#password2").val(response.usuario.password);
+					}
+				});
+				$("#myModal").modal();
+			});
+			$("#enviar_datos").click(function(){
+				if($("#password").val() === $("#password2").val()){
+					
+					var nombre = $("#nombre").val();
+					var apellidos = $("#apellidos").val();
+					var usuario = $("#usuario").val();
+					var email = $("#email").val();
+					var password = $("#password").val();
+					$.ajax({
+					data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'2',"nombre":nombre,"apellidos":apellidos,"usuario":usuario,"email":email,"password":password},
+					url: "http://localhost/Noticias/administracion/perfil.php",
+					type: "POST",
+					success:  function (response) {
+						console.log(response);
+						swal({title: "Usuario",text: "Datos actualizados correctamente",type: "success"});
+					},
+					error: function(response){
+						console.log(response);
+					}
+				});
+				}else{
+					swal({title: "Password",text: "Las contraseñas no coinciden",type: "warning"});
+				}
+			});
+		});
+	</script>
 
 	<!-- -Inicia contenedor o div azul superior -->
 		<div id="navbar" class="navbar navbar-default ace-save-state">
@@ -383,8 +480,8 @@
 							<ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
 
 								<li>
-									<a href="#">
-										<i class="ace-icon fa fa-user"></i>
+									<a id="myBtn" href="#">
+										<i class="ace-icon fa fa-user" id="myBtn"></i>
 										Perfil
 									</a>
 								</li>
@@ -455,11 +552,14 @@
 						<b class="arrow"></b>
 					</li>
 
-					<li class="">
+						<?php 
+						if( $_SESSION['userRol'] == "admin"){
+						?>
+						<li class="">
 						<a href="#" class="dropdown-toggle">
-							<i class="menu-icon fa fa-desktop"></i>
+							<i class="menu-icon fa fa-user"></i>
 							<span class="menu-text">
-								Elemento 1
+								Administradores
 							</span>
 
 							<b class="arrow fa fa-angle-down"></b>
@@ -469,51 +569,9 @@
 
 						<ul class="submenu">
 							<li class="">
-								<a href="#" class="dropdown-toggle">
-									<i class="menu-icon fa fa-caret-right"></i>
-
-									Contenido 1
-									<b class="arrow fa fa-angle-down"></b>
-								</a>
-
-								<b class="arrow"></b>
-
-								<ul class="submenu">
-									<li class="">
-										<a href="#">
-											<i class="menu-icon fa fa-caret-right"></i>
-											Sub contenido 1
-										</a>
-
-										<b class="arrow"></b>
-									</li>
-
-									<li class="">
-										<a href="#">
-											<i class="menu-icon fa fa-caret-right"></i>
-											Sub contenido 2
-										</a>
-
-										<b class="arrow"></b>
-									</li>
-
-									<li class="">
-										<a href="#">
-											<i class="menu-icon fa fa-caret-right"></i>
-											Sub contenido 3
-										</a>
-
-										<b class="arrow"></b>
-									</li>
-
-								
-								</ul>
-							</li>
-
-							<li class="">
 								<a href="#">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Contenido 2
+									<i class="user-icon fa fa-caret-right"></i>
+									Altas
 								</a>
 
 								<b class="arrow"></b>
@@ -521,82 +579,20 @@
 
 							<li class="">
 								<a href="#">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Contenido 3
+									<i class="user-icon fa fa-caret-right"></i>
+									Bajas y cambios
 								</a>
 
 								<b class="arrow"></b>
-							</li>
-
-							<li class="">
-								<a href="#">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Contenido 4
-								</a>
-
-								<b class="arrow"></b>
-							</li>
-
-
-							<li class="">
-								<a href="#" class="dropdown-toggle">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Contenido 5
-									<b class="arrow fa fa-angle-down"></b>
-								</a>
-
-								<b class="arrow"></b>
-
-								<ul class="submenu">
-									<li class="">
-										<a href="#">
-											<i class="menu-icon fa fa-leaf green"></i>
-											Sub contenido
-										</a>
-
-										<b class="arrow"></b>
-									</li>
-
-									<li class="">
-										<a href="#" class="dropdown-toggle">
-											<i class="menu-icon fa fa-pencil orange"></i>
-
-											Sub contenido 2
-											<b class="arrow fa fa-angle-down"></b>
-										</a>
-
-										<b class="arrow"></b>
-
-										<ul class="submenu">
-											<li class="">
-												<a href="#">
-													<i class="menu-icon fa fa-plus purple"></i>
-													Sub sub 1
-												</a>
-
-												<b class="arrow"></b>
-											</li>
-
-											<li class="">
-												<a href="#">
-													<i class="menu-icon fa fa-eye pink"></i>
-													Sub sub 2
-												</a>
-
-												<b class="arrow"></b>
-											</li>
-										</ul>
-									</li>
-								</ul>
 							</li>
 						</ul>
-					</li>
+						</li>
 
-					<li class="">
+						<li class="">
 						<a href="#" class="dropdown-toggle">
-							<i class="menu-icon fa fa-list"></i>
-							<span class="menu-text"> Elemento 2 </span>
-<span class="badge badge-primary">2</span>
+							<i class="menu-icon fa fa-user"></i>
+							<span class="menu-text"> Clientes</span>
+							<span class="badge badge-primary">2</span>
 							<b class="arrow fa fa-angle-down"></b>
 						</a>
 
@@ -606,7 +602,7 @@
 							<li class="">
 								<a href="#">
 									<i class="menu-icon fa fa-caret-right"></i>
-									1
+									Altas
 								</a>
 
 								<b class="arrow"></b>
@@ -615,14 +611,16 @@
 							<li class="">
 								<a href="#">
 									<i class="menu-icon fa fa-caret-right"></i>
-									2
+									Bajas y cambios
 								</a>
 
 								<b class="arrow"></b>
 							</li>
 						</ul>
 					</li>
-
+						<?php
+						}else{ }
+						?>
 					<li class="">
 						<a href="#" class="dropdown-toggle">
 							<i class="menu-icon fa fa-pencil-square-o"></i>
