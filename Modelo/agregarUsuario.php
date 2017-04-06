@@ -10,6 +10,6 @@ if (!$enlace) {
     echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
     exit;
 }
-mysqli_query($enlace, "insert into usuario(nombre,apellidos,usuario,email,password,estado) values('$nombreU',
-                        '$apeU','$usuarioU','$emailU',AES_ENCRYPT('$passwU','llave'),'0')");
+mysqli_query($enlace, "insert into usuario(nombre,apellidos,usuario,email,password,estado,rol) values('$nombreU',
+                        '$apeU','$usuarioU','$emailU',AES_ENCRYPT('$passwU','llave'),'0','cliente')");
 ?>

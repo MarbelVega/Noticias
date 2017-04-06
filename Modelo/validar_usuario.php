@@ -28,13 +28,22 @@
             $_SESSION['userUser'] = $fila['usuario'];
             $_SESSION['userRol'] = $fila['rol'];
             $estado = $fila['estado'];
-            if($estado < 3){ ?>
-                  <script type="text/javascript">
+            if($estado < 3){ 
+                if($_SESSION['userRol']=="admin"){?>
+                     <script type="text/javascript">
        		        swal({title: "Login",text: "Bienvenido al sistema",type: "success"},function(){
 		    			window.location.href="../administracion/index.php";			  	
 		    		 });
                   </script>
-            <?php
+                  <?php    
+                }else{?>
+                  <script type="text/javascript">
+       		        swal({title: "Login",text: "Bienvenido al sistema",type: "success"},function(){
+		    			window.location.href="../clientes/index.php";			  	
+		    		 });
+                  </script>
+                  <?php
+                }
             }else{  ?>
                   <script type="text/javascript">
                     swal({title: "Usuario bloqueado",text: "Ha excedido el limite de intentos permitidos, por favor consulte con el administrador",type: "error"},function(){

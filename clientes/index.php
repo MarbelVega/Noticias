@@ -12,12 +12,146 @@
 <link rel="stylesheet" type="text/css" href="assets/css/slick.css">
 <link rel="stylesheet" type="text/css" href="assets/css/theme.css">
 <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+<link rel="stylesheet" type="text/css" href="../css/sweetalert.css">
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/sweetalert.min.js"></script>
+<script type="text/javascript" src="../js/sweetalert.min.js"></script>
 <!--[if lt IE 9]> ULISES GARCIA RAMOS
 <script src="assets/js/html5shiv.min.js"></script>
 <script src="assets/js/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
+<?php
+session_start();
+		if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) {
+		
+		} else {
+		?>
+		<script>
+			swal({
+		    			title: "Acceso restringido!",
+		    			text: "Esta pagina es exclusiva para usuarios registrados",
+		    			type: "error",
+		    			showCancelButton:true,
+		    			confirmButtonColor: "#DD6B55",
+		    			confirmButtonText: "Registrarse",
+		    			cancelButtonText: "Salir",
+		    			closeOnConfirm: false,
+		    			closeOnCancel: false},
+		    			function(isConfirm){
+		    				if(isConfirm){
+		    					swal({title: "Redireccionando",text: "registro de usuarios",type: "success"},function(){
+		    							window.location.href = '../alta_usuario.html';		  	
+		    						  });	
+		    				}else{
+		    					window.location.href = '../index.html';
+		    				}
+		    			});
+		</script>
+		<?php
+	}
+    ?>
+<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
+		
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header" style="padding:35px 50px;">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4><span class="glyphicon glyphicon-lock"></span> Perfil</h4>
+			</div>
+			<div class="modal-body" style="padding:40px 50px;">
+			<form role="form">
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span>Nombre</label>
+				<input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
+				</div>
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span> Apellidos</label>
+				<input type="text" class="form-control" id="apellidos" placeholder="Apellidos" required>
+				</div>
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span> Nombre de usuario</label>
+				<input type="text" class="form-control" id="usuario" placeholder="Usuario" required>
+				</div>
+				<div class="form-group">
+				<label for="usrname"><span class="glyphicon glyphicon-user"></span>Correo electronico</label>
+				<input type="text" class="form-control" id="email" placeholder="email" required>
+				</div>
+				<div class="form-group">
+				<label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+				<input type="password" class="form-control" id="password" placeholder="********" required>
+				</div>
+				<div class="form-group">
+				<label for="psw"><span class="glyphicon glyphicon-eye-open"></span>Confirmar password</label>
+				<input type="password" class="form-control" id="password2" placeholder="********" required>
+				</div>
+				<button type="submit" class="btn btn-success btn-block" id="enviar_datos"><span class="glyphicon glyphicon-off"></span>Aceptar</button>
+			</form>
+			</div>
+			<div class="modal-footer">
+			<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+			</div>
+		</div>
+		
+		</div>
+	</div> 
+	
+	<script>
+		$(document).ready(function(){
+      $("#myBtn").click(function(){
+        $.ajax({
+					data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'1'},
+					dataType: "json",
+					url: "http://localhost/Noticias/administracion/perfil.php",
+					type: "POST",
+					success:  function (response) {
+						$("#nombre").val(response.usuario.nombre);
+						$("#apellidos").val(response.usuario.apellidos);
+						$("#usuario").val(response.usuario.usuario);
+						$("#email").val(response.usuario.email);
+						$("#password").val(response.usuario.password);
+						$("#password2").val(response.usuario.password);
+					}
+				});
+        $("#myModal").modal();
+			});
+
+      $("#enviar_datos").click(function(){
+				if($("#password").val() === $("#password2").val()){
+					
+					var nombre = $("#nombre").val();
+					var apellidos = $("#apellidos").val();
+					var usuario = $("#usuario").val();
+					var email = $("#email").val();
+					var password = $("#password").val();
+					$.ajax({
+					data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'2',"nombre":nombre,"apellidos":apellidos,"usuario":usuario,"email":email,"password":password},
+					url: "http://localhost/Noticias/administracion/perfil.php",
+					type: "POST",
+					success:  function (response) {
+						console.log(response);
+						swal({title: "Usuario",text: "Datos actualizados correctamente",type: "success"});
+					},
+					error: function(response){
+						console.log(response);
+					}
+				});
+				}else{
+					swal({title: "Password",text: "Las contraseñas no coinciden",type: "warning"});
+				}
+			});
+
+		});
+	</script>
+
+
+
+
+
+
 <div id="preloader">
   <div id="status">&nbsp;</div>
 </div>
@@ -36,7 +170,25 @@
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="#">Archivo</a></li>
                 <li><a href="#">Contacto</a></li>
-              </ul>
+
+
+								<li>
+									<a id="myBtn" href="#">
+										<i class="ace-icon fa fa-user" id="myBtn"></i>
+										Perfil
+									</a>
+								</li>
+
+								<li class="divider"></li>
+
+								<li>
+									<a href="../Modelo/cerrar_sesion.php">
+										<i class="ace-icon fa fa-power-off"></i>
+										Cerrar Sesión
+									</a>
+								</li>
+							</ul>
+              
             </div>
           </div>
         </nav>
@@ -70,6 +222,8 @@
         <li><a href="#">Noticia 9</a></li>
       </ul>
     </div>
+
+     
     <div class="thumbnail_slider_area">
       <div class="owl-carousel">
         <div class="signle_iteam"> <img src="images/umar.jpg" alt="" width:"200px" height:"399px">

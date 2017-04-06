@@ -93,7 +93,7 @@
 		<div class="modal-content">
 			<div class="modal-header" style="padding:35px 50px;">
 			<button type="button" class="close" data-dismiss="modal">&times;</button>
-			<h4><span class="glyphicon glyphicon-lock"></span> Perfil</h4>
+			<h4 id="titulo_modal"><span class="glyphicon glyphicon-lock"></span> Perfil</h4>
 			</div>
 			<div class="modal-body" style="padding:40px 50px;">
 			<form role="form">
@@ -115,11 +115,11 @@
 				</div>
 				<div class="form-group">
 				<label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-				<input type="text" class="form-control" id="password" placeholder="********" required>
+				<input type="password" class="form-control" id="password" placeholder="********" required>
 				</div>
 				<div class="form-group">
 				<label for="psw"><span class="glyphicon glyphicon-eye-open"></span>Confirmar password</label>
-				<input type="text" class="form-control" id="password2" placeholder="********" required>
+				<input type="password" class="form-control" id="password2" placeholder="********" required>
 				</div>
 				<button type="submit" class="btn btn-success btn-block" id="enviar_datos"><span class="glyphicon glyphicon-off"></span>Aceptar</button>
 			</form>
@@ -134,6 +134,7 @@
 	
 	<script>
 		$(document).ready(function(){
+			var altas;
 			$("#myBtn").click(function(){
 				$.ajax({
 					data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'1'},
@@ -150,22 +151,67 @@
 					}
 				});
 				$("#myModal").modal();
+				altas = 1;
 			});
 			$("#enviar_datos").click(function(){
+				if (altas ==1){
+					if($("#password").val() === $("#password2").val()){
+						
+						var nombre = $("#nombre").val();
+						var apellidos = $("#apellidos").val();
+						var usuario = $("#usuario").val();
+						var email = $("#email").val();
+						var password = $("#password").val();
+						$.ajax({
+						data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'2',"nombre":nombre,"apellidos":apellidos,"usuario":usuario,"email":email,"password":password},
+						url: "http://localhost/Noticias/administracion/perfil.php",
+						type: "POST",
+						success:  function (response) {
+							console.log(response);
+							swal({title: "Usuario",text: "Datos actualizados correctamente",type: "success"});
+						},
+						error: function(response){
+							console.log(response);
+						}
+					});
+					}else{
+						swal({title: "Password",text: "Las contraseñas no coinciden",type: "warning"});
+					}
+				}else if(altas ==2){
+						url = "http://localhost/Noticias/Modelo/altas.php";
+						titulo = "Administrador";
+						mensaje = "Administrador agregado correctamente";
+						altaUsuario(url,titulo,mensaje);
+				}
+				else if(altas ==3){
+						url = "http://localhost/Noticias/Modelo/altas.php";
+						titulo = "Cliente";
+						mensaje = "cliente agregado correctamente";
+						altaUsuario(url,titulo,mensaje);
+				}
+
+			});
+
+			$("#altas_admin").click(function(){
+				$("#titulo_modal").text("Alta de administradores");
+				$("#myModal").modal();
+				altas = 2;
+			});
+
+			function altaUsuario(url,titulo,mensaje){
 				if($("#password").val() === $("#password2").val()){
-					
 					var nombre = $("#nombre").val();
 					var apellidos = $("#apellidos").val();
 					var usuario = $("#usuario").val();
 					var email = $("#email").val();
 					var password = $("#password").val();
 					$.ajax({
-					data: {"idUsuario" : <?php echo "{$_SESSION['userId']}";?>,"op":'2',"nombre":nombre,"apellidos":apellidos,"usuario":usuario,"email":email,"password":password},
-					url: "http://localhost/Noticias/administracion/perfil.php",
+					data: {"op":'1',"nombre":nombre,"apellidos":apellidos,"usuario":usuario,"email":email,"password":password},
+					url: url,
 					type: "POST",
 					success:  function (response) {
 						console.log(response);
-						swal({title: "Usuario",text: "Datos actualizados correctamente",type: "success"});
+						swal({title: titulo,text: mensaje,type: "success"});
 					},
 					error: function(response){
 						console.log(response);
@@ -174,7 +220,8 @@
 				}else{
 					swal({title: "Password",text: "Las contraseñas no coinciden",type: "warning"});
 				}
-			});
+			}
+
 		});
 	</script>
 
@@ -569,8 +616,8 @@
 
 						<ul class="submenu">
 							<li class="">
-								<a href="#">
-									<i class="user-icon fa fa-caret-right"></i>
+								<a id="altas_admin" href="#">
+									<i  id="altas_admin" class="user-icon fa fa-caret-right"></i>
 									Altas
 								</a>
 
